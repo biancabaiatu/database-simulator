@@ -1,0 +1,346 @@
+Object Oriented Programming Course
+Homework - VideosDB
+
+November 2021
+
+# Info
+https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema
+
+# About the code
+
+* test_db - contains the tests in JSON format
+* src
+   * checker - the checker's sources including the checkstyle necessary files, not to be modified
+   * fileio - classes for parsing the input files, not to be modified
+   * common
+        Constants class:
+              -> contains utility classes with constants and static methods
+
+        *exception
+              -> contains al the exceptions thrown when an Action cannot be performed
+
+        *Database class:
+              -> the main class that is used as a collector form all the information
+                received as input
+              -> the initialize method initializes the database and forms the lists
+                of actors, series, movies and users
+              -> class uses the Singleton pattern
+              -> contains getters for all the fields
+              -> the clear method removes all the information from the database
+
+        *Filter class:
+              -> the Filter class is used to retrieve the filters received
+                to execute the queries
+              -> it contains a constructor that initializes the fields if they
+                do not contain null values. The filters contain restraints
+                about the year of publication, a genre, certain keywords or
+                awards
+
+   * actor
+        * contains an enum for the types of awards an actor can have - do not modify it
+
+        * Actor class:
+              -> class for the representation of an actor in the database
+              -> contains a constructor that initializes the fields from the
+                actor class using the input received from ActorInputData
+              -> contains getters for all the fields and a toString method
+
+        * ActorResource class:
+              -> class that uses the Singleton pattern and implements all the
+                methods used for the manipulation of the actors in the database
+              -> the methods implemented are connected to the ActorQuery class
+                where they are called to give a response to the query
+              -> I used streams and Collection sorts to implement the methods
+                in order to get the lists of actors needed for the queries
+              -> the getTopActors method, getActorsByAwards method,
+                getActorByFilterDescription method return lists of actors
+                sorted by ratings, by a list of awards received as a parameter,
+                respectively by a list of keywords received as a parameter
+                that respect the query received
+              -> to find the number of awards received by every actor I
+                implemented the getAwardsCount method
+              -> to find the rating of an actor I implemented the getActorRating
+                that iterates through the filmography of an actor, gets the
+                rating of every video and adds it to the sum, then returns
+                the sum divided by the number of videos that were rated
+
+   * entertainment
+        * contains an enum for the supported video genres - do not modify it
+        * class for representing a Season of a tv show - do not modify it
+
+        * Movie class:
+              -> class representation of a movie in the database and extends
+                the Video class
+              -> contains a constructor that initializes the fields from the
+                movie class using the input received from MovieInputData
+              -> implements the getDuration and getRating methods
+              -> the addRating method is used to add a rating to a movie
+                by an user given as a parameter. The method throws the
+                VideoNotWatchedException when trying to rate a movie that
+                was not watched by an user and the AlreadyRatedByUserException
+                when trying to rate a movie that was already rated by the user.
+                If the exceptions are not thrown the method inserts the new
+                rating for the movie
+
+        * Series class:
+              -> class representation of a show in the database and extends
+                the Video class
+              -> contains a constructor that initializes the fields from the
+                series class using the input received from SerialInputData
+              -> implements the getDuration and getRating methods
+              -> the addRating method is used to add a rating to a show's
+                season by an user given as a parameter. The method throws the
+                VideoNotWatchedException when trying to rate a show that
+                was not watched by an user and the AlreadyRatedByUserException
+                when trying to rate a show that was already rated by the user.
+                If the exceptions are not thrown the method inserts the new
+                rating for the given season of the show
+
+        * Video class:
+              -> class representation of a video in the database
+              -> contains a constructor that initializes the fields from the
+                video class using the input received from ShowInput
+              -> contains getters for all the fields and a toString method
+              -> contains an abstract method getRating used to calculate the
+                rating of a video
+              -> contains an abstract method getDuration used to calculate the
+                 duration of a video
+
+        * VideoResource
+              -> class that uses the Singleton pattern and implements all the
+                methods used for the manipulation of the videos in the database
+              -> the methods implemented are connected to the VideoQuery class
+                where they are called to give a response to the query
+              -> I used streams and Collection sorts to implement the methods
+                in order to get the lists of videos needed for the queries
+              -> the getTopRatedVideos method iterates through the list of
+                videos in the database, compares the videos by rating,
+                and constructs a list of n videos, with n given as a parameter
+              -> the getTopFavouriteVideos method iterates through the list of
+                videos in the database, compares the videos using the
+                getVideoFavouriteCount method and constructs a list of n videos,
+                with n given as a parameter
+              -> the getTopViewedVideos method iterates through the list of
+                videos in the database, compares the videos using the
+                getVideoViews method and constructs a list of n videos,
+                with n given as a parameter
+              -> the getLongestMovies method iterates through the list of
+                movies in the database, compares the movies using the
+                getDuration method and constructs a list of n movies,
+                with n given as a parameter
+              -> the getLongestShows method iterates through the list of
+                shows in the database, compares the shows using the
+                getDuration method and constructs a list of n shows,
+                with n given as a parameter
+              -> the getVideosByGenre method iterates through the list of
+                videos in the database, determines whether the video has a
+                certain genre given as a parameter and constructs a list with
+                the videos that respect this property
+              -> the getVideoByName method, getMovieByName method,
+                getSeriesByName method iterate through the lists in the
+                database and determine whether the database contains a
+                video, movie or show with the title received as a parameter
+              -> the getVideoFavouriteCount method is used to calculate the
+                number of times a video was added as favourite by all the users
+              -> the getVideoViews method is used to calculate the number of
+                times a video was watched by all the users
+
+   * main
+        -> contains the entry point of the implementation
+        -> initializes the database
+        -> iterates through the commands received from the input
+        -> finds the type of action needed to be performed
+        -> executes the action
+        -> transforms the response received into a JSON object and
+          add it to the JSONArray
+
+   * response
+        * CommandResponse class extends Response:
+                 -> implements the response received from calling
+                   a certain command
+                 -> contains a constructor that initializes the
+                   message that is to be written in the JSON object
+
+        * QueryResponse class extends Response:
+                 -> implements the response received from calling
+                   a certain query
+                 -> contains a constructor that initializes the
+                   message that is to be written in the JSON object
+
+        * RecommendationResponse class extends Response:
+                 -> implements the response received from calling
+                   a certain recommendation
+                 -> contains a constructor that initializes the
+                   message that is to be written in the JSON object
+
+        * Response class:
+                 -> class representation of a response used to create
+                   JSON objects
+                 -> the class is in relationship with all action types
+                   and implements the responses to every action received
+
+   *action
+        * command
+               * Command class extends Action:
+                    -> depending on the success or error of the execution
+                      the method creates a new CommandResponse with given message
+                    -> the addFavourite method executes the FavouriteCommand
+                      command
+                    -> the addRating method executes the RatingCommand. The method
+                      determines whether the video to be rated is a movie or a
+                      show and calls the method from the class
+                    -> the viewVideo command executes the ViewCommand. The method
+                      calls the viewVideo method from the User class
+
+        * query
+               * ActorQuery class:
+                    -> implements the methods used to execute actor related queries
+                    -> depending on the success or error of the execution
+                      the method creates a new QueryResponse with given message
+                    -> the getTopActors method executes the AverageQuery query.
+                      Depending on the sortType the method returns a new
+                      QueryResponse that contains the list of actors
+                    -> the getActorsByAwards method executes the AwardsQuery query.
+                      Depending on the sortType the method returns a new
+                      QueryResponse that contains the list of actors
+                    -> the getActorByFilterDescription method executes the
+                      FilterDescriptionQuery query. Depending on the sortType
+                      the method returns a new QueryResponse that contains the
+                      list of actors
+
+               * Query class extends Action:
+                    -> contains a constructor that initializes and finds the
+                      collection type to query, the criteria and the sort type.
+                    -> the Builder class executes a new Query based on the collection
+
+               * UserQuery class:
+                    -> implements the methods used to execute user related queries
+                    -> depending on the success or error of the execution
+                      the method creates a new QueryResponse with given message
+                    -> the getMostActiveUsers method executes the NumberOfRatingsQuery
+                      query. The method returns a new QueryResponse that contains the
+                      list of users
+
+               * VideoQuery class:
+                    -> implements the methods used to execute video related queries
+                    -> depending on the success or error of the execution
+                      the method creates a new QueryResponse with given message
+                    -> the getTopFavouriteVideos method executes FavoriteQuery query.
+                      The method calls the getTopFavouriteVideos method from
+                      VideoResource class, provides a list of actors, depending on the
+                      sortType the list remains in ascending or descending order.
+                      The list is then send as a parameter to a new QueryResponse
+                    -> the getTopViewedVideos method executes MostViewedQuery query.
+                      The method calls the getTopViewedVideos method from
+                      VideoResource class, provides a list of actors, depending on the
+                      sortType the list remains in ascending or descending order.
+                      The list is then send as a parameter to a new QueryResponse
+                    -> the getTopRatedVideos method executes RatingQuery query.
+                      The method calls the getTopRatedVideos method from
+                      VideoResource class, provides a list of actors, depending on the
+                      sortType the list remains in ascending or descending order.
+                      The list is then send as a parameter to a new QueryResponse
+                    -> the getLongestVideos method executes RatingQuery query.
+                      Depending on the Collection type the method calls the
+                      getLongestMovies method or the getLongestShows method
+                      from VideoResource class, provides a list of actors,
+                      depending on the sortType the list remains in ascending or
+                      descending order. The list is then send as a parameter to a
+                      new QueryResponse
+                    -> The filterVideos method uses the filters received in the
+                      query to filter the list of videos returned from the methods
+                      int the VideoQuery class
+
+        * recommendation
+               * Recommendation class extends Action:
+                    -> contains an enum with all recommendation types
+                    -> Depending on the response of the execute method one type of
+                      recommendation is executed
+                    -> to execute the StandardRecommendation the method getStandard
+                      is called. The method calls the getStandard method from the
+                      RecommendationResource class and returns a new RecommendationResponse
+                      that contains the message to write in the JSON object
+                    -> to execute the BestUnseenRecommendation the method getBestUnseen
+                      is called. The method calls the getBestUnseen method from the
+                      RecommendationResource class and returns a new RecommendationResponse
+                      that contains the message to write in the JSON object
+                    -> to execute the FavoriteRecommendation the method getMostlyLikedVideo
+                      is called. The method calls the getMostlyLikedVideo method from the
+                      RecommendationResource class and returns a new RecommendationResponse
+                      that contains the message to write in the JSON object
+                    -> to execute the PopularRecommendation the method getMostPopular
+                      is called. The method calls the getMostPopular method from the
+                      RecommendationResource class and returns a new RecommendationResponse
+                      that contains the message to write in the JSON object
+                    -> to execute the SearchRecommendation the method search
+                      is called. The method calls the search method from the
+                      RecommendationResource class and returns a new RecommendationResponse
+                      that contains the message to write in the JSON object
+
+               * RecommendationResource
+                    -> class that uses the Singleton pattern and implements all the
+                      methods used for the manipulation of recommendations
+                    -> the methods implemented are connected to the Recommendation class
+                      where they are called to give a response to the query
+                    -> I used streams and Collection sorts to implement the methods
+                      in order to get the videos needed for the queries
+                    -> the getStandard method is used to retrieve the first video
+                      that was not watched by the user from the database
+                    -> the getBestUnseen method retrieves the highest rated video
+                      from the database using the getRating method from Video class
+                    -> the getMostPopular method retrieves a video from the database
+                      that has the best rated genre. The method constructs a HashMap
+                      with the best rated genres that is afterwards sorted by every
+                      rating and retrieves the first video not watched
+                    -> the getMostlyLikedVideo method retrieves the first video from
+                      the database after all the videos were sorted using the
+                      getVideoFavouriteCount method in the VideoResource class
+                    -> the search method retrieves a list of videos sorted by their
+                      rating and have a certain genre given as a parameter
+
+        * Action class:
+                    -> class that retrieves the type of action received from the
+                      ActionInputData class and and executes the the action
+                    -> contains an enum with the action types: Recommendation,
+                      Query, Command
+
+   * user
+        * User class:
+              -> class for the representation of an user in the database
+              -> contains a constructor that initializes the fields from the
+                user class using the input received from UserInputData
+              -> contains getters for all the fields and a toString method
+              -> the addFavourite method is used to add a a video in a user's
+                favourites' list. If the video was not watched yet by the user
+                or the video is already in the user's favourites' list the
+                method throws the VideoNotWatchedException, respectively the
+                AlreadyFavouriteException
+              -> the viewVideo method increases the number of views of a video
+                in the history list of an user. If the video does not exist
+                int the list it is added with number of views 1
+              -> the rateVideo method counts the number of times an user has
+                rated videos
+
+        * UserResource class:
+              -> class that uses the Singleton pattern and implements all the
+                methods used for the manipulation of the users in the database
+              -> the methods implemented are connected to the UsersQuery class
+                where they are called to give a response to the query
+              -> I used streams and Collection sorts to implement the methods
+                in order to get the lists of users needed for the queries
+              -> the getMostActiveUsers method retrieves a list of n users that
+                were sorted by the number of ratings they have given
+
+   * utils
+        * Utils class:
+              -> contain utility classes with constants and static methods
+
+
+# Testing
+
+The Main class runs the checker on your implementation. Add the entry point to your implementation in it.
+
+Run Main to test your implementation from the IDE or from command line.
+
+Run the main method from Test class with the name of the input file from the command line and the result will be written
+to the out.txt file. Thus, you can compare this result with ref.
