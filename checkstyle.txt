@@ -1,0 +1,5 @@
+Starting audit...
+[ERROR] C:\Users\Mobile\Desktop\poo_Andrei\oop-asignments\teme\tema\.\src\common\Filter.java:45:27: '3' is a magic number. [MagicNumber]
+[ERROR] C:\Users\Mobile\Desktop\poo_Andrei\oop-asignments\teme\tema\.\src\common\Filter.java:47:37: '3' is a magic number. [MagicNumber]
+Audit done.
+Checkstyle ends with 2 errors.
